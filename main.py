@@ -5,6 +5,32 @@ from pydantic import BaseModel
 import psycopg2
 import psycopg2.extras
 from supabase import create_client, Client
+import time
+
+# ---------- Simple in-memory cache ----------
+CACHE = {}
+CACHE_TTL_SECONDS = 30
+
+
+def get_cached_tasks(user_id):
+    entry = CACHE.get(user_id)
+    if entry is None:
+        return None
+
+    cached_data, cached_at = entry
+    if time.time() - cached_at > CACHE_TTL_SECONDS:
+        del CACHE[user_id]
+        return None
+
+    return cached_data
+
+
+def set_cached_tasks(user_id, data):
+    CACHE[user_id] = (data, time.time())
+
+
+def invalidate_cache(user_id):
+    CACHE.pop(user_id, None)
 
 load_dotenv()
 
@@ -107,15 +133,20 @@ def login(credentials: AuthCredentials):
 # ---------- Task routes (protected) ----------
 from fastapi import Depends
 
-
 @app.get("/tasks")
 def get_tasks(user=Depends(get_current_user)):
+    cached = get_cached_tasks(user.id)
+    if cached is not None:
+        return cached
+
     conn = get_connection()
     cur = conn.cursor()
     cur.execute("SELECT * FROM tasks WHERE user_id = %s", (user.id,))
     rows = [dict(row) for row in cur.fetchall()]
     cur.close()
     conn.close()
+
+    set_cached_tasks(user.id, rows)
     return rows
 
 
@@ -134,6 +165,7 @@ def create_task(new_task: TaskCreate, user=Depends(get_current_user)):
     conn.commit()
     cur.close()
     conn.close()
+    invalidate_cache(user.id)
     return dict(row)
 
 
@@ -164,6 +196,7 @@ def update_task(task_id: int, updated: TaskUpdate, user=Depends(get_current_user
     conn.commit()
     cur.close()
     conn.close()
+    invalidate_cache(user.id)
     return dict(row)
 
 
@@ -182,4 +215,5 @@ def delete_task(task_id: int, user=Depends(get_current_user)):
     conn.commit()
     cur.close()
     conn.close()
+    invalidate_cache(user.id)
     return
