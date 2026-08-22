@@ -6,6 +6,9 @@ import psycopg2
 import psycopg2.extras
 from supabase import create_client, Client
 import time
+from fastapi.responses import Response
+from fpdf import FPDF
+import io
 
 # ---------- Simple in-memory cache ----------
 CACHE = {}
@@ -217,3 +220,52 @@ def delete_task(task_id: int, user=Depends(get_current_user)):
     conn.close()
     invalidate_cache(user.id)
     return
+
+
+@app.get("/reports/summary")
+def get_summary_report(user=Depends(get_current_user)):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM tasks WHERE user_id = %s", (user.id,))
+    tasks = [dict(row) for row in cur.fetchall()]
+    cur.close()
+    conn.close()
+
+    total = len(tasks)
+    done = len([t for t in tasks if t["done"]])
+    pending = total - done
+
+    pdf = FPDF()
+    pdf.add_page()
+
+    pdf.set_font("Helvetica", "B", 16)
+    pdf.cell(0, 10, "Task Summary Report", ln=True)
+
+    pdf.set_font("Helvetica", "", 11)
+    pdf.cell(0, 8, f"User: {user.email}", ln=True)
+    pdf.ln(4)
+
+    pdf.set_font("Helvetica", "B", 12)
+    pdf.cell(0, 8, f"Total tasks: {total}", ln=True)
+    pdf.cell(0, 8, f"Completed: {done}", ln=True)
+    pdf.cell(0, 8, f"Pending: {pending}", ln=True)
+    pdf.ln(6)
+
+    pdf.set_font("Helvetica", "B", 12)
+    pdf.cell(0, 8, "Tasks:", ln=True)
+    pdf.set_font("Helvetica", "", 11)
+
+    if total == 0:
+        pdf.cell(0, 8, "No tasks yet.", ln=True)
+    else:
+        for task in tasks:
+            status = "Done" if task["done"] else "Pending"
+            pdf.cell(0, 8, f"- {task['title']} ({status})", ln=True)
+
+    pdf_bytes = bytes(pdf.output())
+
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": "attachment; filename=task_summary.pdf"}
+    )

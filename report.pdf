@@ -1,0 +1,93 @@
+HTTP/1.1 200 OK
+date: Sat, 22 Aug 2026 18:08:55 GMT
+server: uvicorn
+content-disposition: attachment; filename=task_summary.pdf
+content-length: 1255
+content-type: application/pdf
+
+%PDF-1.3
+%éëñ¿
+1 0 obj
+<<
+/Count 1
+/Kids [3 0 R]
+/MediaBox [0 0 595.28 841.89]
+/Type /Pages
+>>
+endobj
+2 0 obj
+<<
+/OpenAction [3 0 R /FitH null]
+/PageLayout /OneColumn
+/Pages 1 0 R
+/Type /Catalog
+>>
+endobj
+3 0 obj
+<<
+/Contents 4 0 R
+/Parent 1 0 R
+/Resources 7 0 R
+/Type /Page
+>>
+endobj
+4 0 obj
+<<
+/Filter /FlateDecode
+/Length 217
+>>
+stream
+xœ?OÃ0G÷~ŠßH®>§uşL˜˜­‹•˜RÇQl„øö$¡A 2°ZïŞ½³ÄİBĞ&ÅûâFcµg°"! Ÿq«‡§„‰3¤ùz€t…+mÂoÎ™î¶õ]\B¿^ğÕ^‚yÎökÔhx
+¶+Pš6DßXŠ6DŞ9ÕTz÷KÖçÈ9Y¢H®¿r|45b
+ğáÉÉ¾ó®­m´Uñ‡S¹ ,¹{ÛT§æ8gS&)¾¿!ÿ¹\ÉŒ²dºÆÎ”/ÃÉc3ÓºÃrr}C¤f“
+endstream
+endobj
+5 0 obj
+<<
+/BaseFont /Helvetica-Bold
+/Encoding /WinAnsiEncoding
+/Subtype /Type1
+/Type /Font
+>>
+endobj
+6 0 obj
+<<
+/BaseFont /Helvetica
+/Encoding /WinAnsiEncoding
+/Subtype /Type1
+/Type /Font
+>>
+endobj
+7 0 obj
+<<
+/Font <</F1 5 0 R
+/F2 6 0 R>>
+/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]
+>>
+endobj
+8 0 obj
+<<
+/CreationDate (D:20260822180856Z)
+>>
+endobj
+xref
+0 9
+0000000000 65535 f 
+0000000015 00000 n 
+0000000102 00000 n 
+0000000205 00000 n 
+0000000285 00000 n 
+0000000574 00000 n 
+0000000676 00000 n 
+0000000773 00000 n 
+0000000870 00000 n 
+trailer
+<<
+/Size 9
+/Root 2 0 R
+/Info 8 0 R
+/ID [<A3E61D8E2253D27C40C04B94F42FB759><A3E61D8E2253D27C40C04B94F42FB759>]
+>>
+startxref
+925
+%%EOF
